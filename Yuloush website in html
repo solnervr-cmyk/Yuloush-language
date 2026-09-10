@@ -1,0 +1,1871 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Yuloush — Our Class Language</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Kalam:wght@400;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --board: #1f3d2f;
+    --board-deep: #142a1f;
+    --chalk: #f4f1e6;
+    --chalk-dim: #cfd9cf;
+    --yellow: #f2c14e;
+    --coral: #e8735c;
+    --page: #eef2ec;
+    --paper: #ffffff;
+    --grid-line: #e4ebe2;
+    --ink: #1c231f;
+    --ink-soft: #56635a;
+    --rule: #d8e0d4;
+    --radius: 10px;
+  }
+
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Inter', sans-serif;
+    background: var(--page);
+    background-image:
+      linear-gradient(var(--grid-line) 1px, transparent 1px),
+      linear-gradient(90deg, var(--grid-line) 1px, transparent 1px);
+    background-size: 28px 28px;
+    color: var(--ink);
+    min-height: 100vh;
+  }
+
+  .tab-radio { position: absolute; opacity: 0; pointer-events: none; }
+
+  .wrap { max-width: 880px; margin: 0 auto; padding: 0 20px 80px; }
+
+  .board {
+    background: var(--board);
+    background-image: radial-gradient(ellipse at top left, rgba(255,255,255,0.05), transparent 60%);
+    color: var(--chalk);
+    padding: 46px 32px 0;
+    border-radius: 0 0 22px 22px;
+    box-shadow: 0 12px 30px -18px rgba(20,42,31,0.6);
+  }
+
+  .board-inner { max-width: 880px; margin: 0 auto; }
+
+  .board-title {
+    font-family: 'Kalam', cursive;
+    font-weight: 700;
+    font-size: 3rem;
+    margin: 0;
+    letter-spacing: 0.5px;
+    text-shadow: 0 2px 0 rgba(0,0,0,0.15);
+  }
+
+  .board-title .dot { color: var(--yellow); }
+
+  .board-sub {
+    font-size: 1.02rem;
+    color: var(--chalk-dim);
+    margin: 6px 0 30px;
+    max-width: 46ch;
+    line-height: 1.55;
+  }
+
+  .tabs { display: flex; gap: 6px; }
+
+  .tab-btn {
+    display: inline-block;
+    font-family: 'Kalam', cursive;
+    font-size: 1.1rem;
+    color: var(--chalk-dim);
+    padding: 12px 22px 14px;
+    cursor: pointer;
+    border-radius: 10px 10px 0 0;
+    position: relative;
+    user-select: none;
+  }
+
+  #tabset-grammar:checked ~ .board label[for="tabset-grammar"],
+  #tabset-dictionary:checked ~ .board label[for="tabset-dictionary"] {
+    background: var(--page);
+    color: var(--board-deep);
+  }
+
+  #tabset-grammar:checked ~ .board label[for="tabset-grammar"]::after,
+  #tabset-dictionary:checked ~ .board label[for="tabset-dictionary"]::after {
+    content: "";
+    position: absolute;
+    left: 14px; right: 14px; bottom: 6px;
+    height: 4px;
+    background: var(--coral);
+    border-radius: 3px;
+  }
+
+  .panel { display: none; padding-top: 30px; }
+  #tabset-grammar:checked ~ .wrap #panel-grammar { display: block; }
+  #tabset-dictionary:checked ~ .wrap #panel-dictionary { display: block; }
+
+  .intro-line {
+    font-size: 1rem;
+    color: var(--ink-soft);
+    max-width: 62ch;
+    line-height: 1.6;
+    margin: 0 0 22px;
+  }
+
+  .rule-card {
+    background: var(--paper);
+    border: 1px solid var(--rule);
+    border-left: 6px solid var(--coral);
+    border-radius: var(--radius);
+    padding: 22px 24px;
+    margin-bottom: 18px;
+  }
+
+  .rule-card:nth-child(2n) { border-left-color: var(--yellow); }
+
+  .rule-card h3 { margin: 0 0 8px; font-size: 1.05rem; font-weight: 700; }
+  .rule-card p { margin: 0 0 12px; color: var(--ink-soft); line-height: 1.6; }
+
+  .example-row { display: flex; flex-wrap: wrap; gap: 10px; }
+
+  .example-chip {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.85rem;
+    background: var(--page);
+    border: 1px solid var(--rule);
+    border-radius: 999px;
+    padding: 6px 14px;
+    color: var(--ink);
+  }
+
+  .example-chip b { color: var(--coral); }
+
+  .search-row { display: flex; gap: 10px; margin-bottom: 18px; }
+
+  .search-box { position: relative; flex: 1; }
+
+  .search-box svg {
+    position: absolute;
+    left: 14px; top: 50%;
+    transform: translateY(-50%);
+    width: 17px; height: 17px;
+    stroke: var(--ink-soft);
+    pointer-events: none;
+  }
+
+  .search-box input {
+    width: 100%;
+    padding: 13px 16px 13px 40px;
+    font-size: 1rem;
+    font-family: 'Inter', sans-serif;
+    border: 1px solid var(--rule);
+    border-radius: var(--radius);
+    background: var(--paper);
+    outline: none;
+    color: var(--ink);
+  }
+
+  .search-box input:focus {
+    border-color: var(--coral);
+    box-shadow: 0 0 0 3px rgba(232,115,92,0.15);
+  }
+
+  .result-count {
+    align-self: center;
+    font-size: 0.85rem;
+    color: var(--ink-soft);
+    white-space: nowrap;
+  }
+
+  .filter-label {
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: var(--ink-soft);
+    margin: 4px 0 8px;
+    letter-spacing: 0.02em;
+  }
+
+  .chip-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 20px;
+  }
+
+  .chip {
+    display: inline-block;
+    appearance: none;
+    cursor: pointer;
+    font-family: 'Inter', sans-serif;
+    font-size: 0.83rem;
+    font-weight: 500;
+    padding: 7px 14px;
+    border-radius: 999px;
+    border: 1px solid var(--rule);
+    background: var(--paper);
+    color: var(--ink-soft);
+    user-select: none;
+  }
+
+  .chip-letter {
+    font-family: 'JetBrains Mono', monospace;
+    min-width: 34px;
+    text-align: center;
+    padding: 7px 10px;
+  }
+
+  .table-wrap {
+    background: var(--paper);
+    border: 1px solid var(--rule);
+    border-radius: var(--radius);
+    overflow: hidden;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+
+  thead th {
+    text-align: left;
+    font-size: 0.72rem;
+    letter-spacing: 0.04em;
+    color: var(--ink-soft);
+    background: var(--page);
+    padding: 12px 18px;
+    border-bottom: 1px solid var(--rule);
+  }
+
+  tbody td {
+    padding: 13px 18px;
+    border-bottom: 1px solid var(--grid-line);
+    font-size: 0.95rem;
+    vertical-align: top;
+  }
+
+  tbody tr:last-child td { border-bottom: none; }
+  tbody tr:hover td { background: var(--page); }
+
+  .word-cell { font-weight: 700; }
+
+  .pron-cell {
+    font-family: 'JetBrains Mono', monospace;
+    color: var(--coral);
+    font-size: 0.85rem;
+    white-space: nowrap;
+  }
+
+  .cat-tag {
+    display: block;
+    margin-top: 4px;
+    font-size: 0.7rem;
+    color: var(--ink-soft);
+  }
+
+  .no-results {
+    display: none;
+    padding: 40px 20px;
+    text-align: center;
+    color: var(--ink-soft);
+  }
+
+  #dictBody tr { display: none; }
+
+  #filter-all:checked ~ .wrap #dictBody tr {
+    display: table-row;
+  }
+
+  #filter-cat-core-expressions:checked ~ .wrap #dictBody tr[data-cat="Core Expressions"] {
+    display: table-row;
+  }
+
+  #filter-cat-pronouns-basics:checked ~ .wrap #dictBody tr[data-cat="Pronouns & Basics"] {
+    display: table-row;
+  }
+
+  #filter-cat-animals:checked ~ .wrap #dictBody tr[data-cat="Animals"] {
+    display: table-row;
+  }
+
+  #filter-cat-emotions-descriptions:checked ~ .wrap #dictBody tr[data-cat="Emotions & Descriptions"] {
+    display: table-row;
+  }
+
+  #filter-cat-action-verbs:checked ~ .wrap #dictBody tr[data-cat="Action Verbs"] {
+    display: table-row;
+  }
+
+  #filter-cat-connectors-small-words:checked ~ .wrap #dictBody tr[data-cat="Connectors & Small Words"] {
+    display: table-row;
+  }
+
+  #filter-cat-time-places:checked ~ .wrap #dictBody tr[data-cat="Time & Places"] {
+    display: table-row;
+  }
+
+  #filter-cat-relationships:checked ~ .wrap #dictBody tr[data-cat="Relationships"] {
+    display: table-row;
+  }
+
+  #filter-cat-flavors:checked ~ .wrap #dictBody tr[data-cat="Flavors"] {
+    display: table-row;
+  }
+
+  #filter-cat-miscellaneous:checked ~ .wrap #dictBody tr[data-cat="Miscellaneous"] {
+    display: table-row;
+  }
+
+  #filter-letter-A:checked ~ .wrap #dictBody tr[data-letter="A"] {
+    display: table-row;
+  }
+
+  #filter-letter-B:checked ~ .wrap #dictBody tr[data-letter="B"] {
+    display: table-row;
+  }
+
+  #filter-letter-C:checked ~ .wrap #dictBody tr[data-letter="C"] {
+    display: table-row;
+  }
+
+  #filter-letter-D:checked ~ .wrap #dictBody tr[data-letter="D"] {
+    display: table-row;
+  }
+
+  #filter-letter-E:checked ~ .wrap #dictBody tr[data-letter="E"] {
+    display: table-row;
+  }
+
+  #filter-letter-F:checked ~ .wrap #dictBody tr[data-letter="F"] {
+    display: table-row;
+  }
+
+  #filter-letter-G:checked ~ .wrap #dictBody tr[data-letter="G"] {
+    display: table-row;
+  }
+
+  #filter-letter-H:checked ~ .wrap #dictBody tr[data-letter="H"] {
+    display: table-row;
+  }
+
+  #filter-letter-K:checked ~ .wrap #dictBody tr[data-letter="K"] {
+    display: table-row;
+  }
+
+  #filter-letter-L:checked ~ .wrap #dictBody tr[data-letter="L"] {
+    display: table-row;
+  }
+
+  #filter-letter-M:checked ~ .wrap #dictBody tr[data-letter="M"] {
+    display: table-row;
+  }
+
+  #filter-letter-N:checked ~ .wrap #dictBody tr[data-letter="N"] {
+    display: table-row;
+  }
+
+  #filter-letter-O:checked ~ .wrap #dictBody tr[data-letter="O"] {
+    display: table-row;
+  }
+
+  #filter-letter-P:checked ~ .wrap #dictBody tr[data-letter="P"] {
+    display: table-row;
+  }
+
+  #filter-letter-R:checked ~ .wrap #dictBody tr[data-letter="R"] {
+    display: table-row;
+  }
+
+  #filter-letter-S:checked ~ .wrap #dictBody tr[data-letter="S"] {
+    display: table-row;
+  }
+
+  #filter-letter-T:checked ~ .wrap #dictBody tr[data-letter="T"] {
+    display: table-row;
+  }
+
+  #filter-letter-U:checked ~ .wrap #dictBody tr[data-letter="U"] {
+    display: table-row;
+  }
+
+  #filter-letter-W:checked ~ .wrap #dictBody tr[data-letter="W"] {
+    display: table-row;
+  }
+
+  #filter-all:checked ~ .wrap label[for="filter-all"] {
+    background: var(--board);
+    border-color: var(--board);
+    color: var(--chalk);
+  }
+
+  #filter-cat-core-expressions:checked ~ .wrap label[for="filter-cat-core-expressions"] {
+    background: var(--board);
+    border-color: var(--board);
+    color: var(--chalk);
+  }
+
+  #filter-cat-pronouns-basics:checked ~ .wrap label[for="filter-cat-pronouns-basics"] {
+    background: var(--board);
+    border-color: var(--board);
+    color: var(--chalk);
+  }
+
+  #filter-cat-animals:checked ~ .wrap label[for="filter-cat-animals"] {
+    background: var(--board);
+    border-color: var(--board);
+    color: var(--chalk);
+  }
+
+  #filter-cat-emotions-descriptions:checked ~ .wrap label[for="filter-cat-emotions-descriptions"] {
+    background: var(--board);
+    border-color: var(--board);
+    color: var(--chalk);
+  }
+
+  #filter-cat-action-verbs:checked ~ .wrap label[for="filter-cat-action-verbs"] {
+    background: var(--board);
+    border-color: var(--board);
+    color: var(--chalk);
+  }
+
+  #filter-cat-connectors-small-words:checked ~ .wrap label[for="filter-cat-connectors-small-words"] {
+    background: var(--board);
+    border-color: var(--board);
+    color: var(--chalk);
+  }
+
+  #filter-cat-time-places:checked ~ .wrap label[for="filter-cat-time-places"] {
+    background: var(--board);
+    border-color: var(--board);
+    color: var(--chalk);
+  }
+
+  #filter-cat-relationships:checked ~ .wrap label[for="filter-cat-relationships"] {
+    background: var(--board);
+    border-color: var(--board);
+    color: var(--chalk);
+  }
+
+  #filter-cat-flavors:checked ~ .wrap label[for="filter-cat-flavors"] {
+    background: var(--board);
+    border-color: var(--board);
+    color: var(--chalk);
+  }
+
+  #filter-cat-miscellaneous:checked ~ .wrap label[for="filter-cat-miscellaneous"] {
+    background: var(--board);
+    border-color: var(--board);
+    color: var(--chalk);
+  }
+
+  #filter-letter-A:checked ~ .wrap label[for="filter-letter-A"],
+  #filter-letter-B:checked ~ .wrap label[for="filter-letter-B"],
+  #filter-letter-C:checked ~ .wrap label[for="filter-letter-C"],
+  #filter-letter-D:checked ~ .wrap label[for="filter-letter-D"],
+  #filter-letter-E:checked ~ .wrap label[for="filter-letter-E"],
+  #filter-letter-F:checked ~ .wrap label[for="filter-letter-F"],
+  #filter-letter-G:checked ~ .wrap label[for="filter-letter-G"],
+  #filter-letter-H:checked ~ .wrap label[for="filter-letter-H"],
+  #filter-letter-K:checked ~ .wrap label[for="filter-letter-K"],
+  #filter-letter-L:checked ~ .wrap label[for="filter-letter-L"],
+  #filter-letter-M:checked ~ .wrap label[for="filter-letter-M"],
+  #filter-letter-N:checked ~ .wrap label[for="filter-letter-N"],
+  #filter-letter-O:checked ~ .wrap label[for="filter-letter-O"],
+  #filter-letter-P:checked ~ .wrap label[for="filter-letter-P"],
+  #filter-letter-R:checked ~ .wrap label[for="filter-letter-R"],
+  #filter-letter-S:checked ~ .wrap label[for="filter-letter-S"],
+  #filter-letter-T:checked ~ .wrap label[for="filter-letter-T"],
+  #filter-letter-U:checked ~ .wrap label[for="filter-letter-U"],
+  #filter-letter-W:checked ~ .wrap label[for="filter-letter-W"] {
+    background: var(--board);
+    border-color: var(--board);
+    color: var(--chalk);
+  }
+
+  @media (max-width: 700px) {
+    .board {
+      padding-left: 20px;
+      padding-right: 20px;
+    }
+
+    .board-title {
+      font-size: 2.4rem;
+    }
+
+    .search-row {
+      flex-direction: column;
+    }
+
+    .result-count {
+      align-self: flex-start;
+    }
+
+    .table-wrap {
+      overflow-x: auto;
+    }
+
+    table {
+      min-width: 620px;
+    }
+  }
+</style>
+</head>
+
+<body>
+
+<input class="tab-radio" type="radio" name="tabset" id="tabset-grammar" checked>
+<input class="tab-radio" type="radio" name="tabset" id="tabset-dictionary">
+
+<input class="tab-radio" type="radio" name="filter" id="filter-all" checked>
+<input class="tab-radio" type="radio" name="filter" id="filter-cat-core-expressions">
+<input class="tab-radio" type="radio" name="filter" id="filter-cat-pronouns-basics">
+<input class="tab-radio" type="radio" name="filter" id="filter-cat-animals">
+<input class="tab-radio" type="radio" name="filter" id="filter-cat-emotions-descriptions">
+<input class="tab-radio" type="radio" name="filter" id="filter-cat-action-verbs">
+<input class="tab-radio" type="radio" name="filter" id="filter-cat-connectors-small-words">
+<input class="tab-radio" type="radio" name="filter" id="filter-cat-time-places">
+<input class="tab-radio" type="radio" name="filter" id="filter-cat-relationships">
+<input class="tab-radio" type="radio" name="filter" id="filter-cat-flavors">
+<input class="tab-radio" type="radio" name="filter" id="filter-cat-miscellaneous">
+
+<input class="tab-radio" type="radio" name="filter" id="filter-letter-A">
+<input class="tab-radio" type="radio" name="filter" id="filter-letter-B">
+<input class="tab-radio" type="radio" name="filter" id="filter-letter-C">
+<input class="tab-radio" type="radio" name="filter" id="filter-letter-D">
+<input class="tab-radio" type="radio" name="filter" id="filter-letter-E">
+<input class="tab-radio" type="radio" name="filter" id="filter-letter-F">
+<input class="tab-radio" type="radio" name="filter" id="filter-letter-G">
+<input class="tab-radio" type="radio" name="filter" id="filter-letter-H">
+<input class="tab-radio" type="radio" name="filter" id="filter-letter-K">
+<input class="tab-radio" type="radio" name="filter" id="filter-letter-L">
+<input class="tab-radio" type="radio" name="filter" id="filter-letter-M">
+<input class="tab-radio" type="radio" name="filter" id="filter-letter-N">
+<input class="tab-radio" type="radio" name="filter" id="filter-letter-O">
+<input class="tab-radio" type="radio" name="filter" id="filter-letter-P">
+<input class="tab-radio" type="radio" name="filter" id="filter-letter-R">
+<input class="tab-radio" type="radio" name="filter" id="filter-letter-S">
+<input class="tab-radio" type="radio" name="filter" id="filter-letter-T">
+<input class="tab-radio" type="radio" name="filter" id="filter-letter-U">
+<input class="tab-radio" type="radio" name="filter" id="filter-letter-W">
+
+<header class="board">
+  <div class="board-inner">
+    <h1 class="board-title">Yuloush<span class="dot">.</span></h1>
+    <p class="board-sub">
+      The language our class made up — grammar rules, greetings,
+      and every word we've invented so far.
+    </p>
+
+    <div class="tabs">
+      <label class="tab-btn" for="tabset-grammar">Grammar Rules</label>
+      <label class="tab-btn" for="tabset-dictionary">Dictionary</label>
+    </div>
+  </div>
+</header>
+
+<div class="wrap">
+
+  <section class="panel" id="panel-grammar">
+
+    <p class="intro-line">
+      A quick reference for how Yuloush works. Keep adding rules as the
+      language grows.
+    </p>
+
+    <div class="rule-card">
+      <h3>Plurals</h3>
+      <p>
+        Add <b>"a"</b> to the end of a word to make it plural.
+      </p>
+
+      <div class="example-row">
+        <span class="example-chip">Casen <b>→</b> Cat</span>
+        <span class="example-chip">Casena <b>→</b> Cats</span>
+      </div>
+    </div>
+
+    <div class="rule-card">
+      <h3>Baby animals</h3>
+      <p>
+        Swap the ending for <b>"e"</b> for one baby animal, or
+        <b>"ea"</b> for more than one.
+      </p>
+
+      <div class="example-row">
+        <span class="example-chip">Casene <b>→</b> Kitten</span>
+        <span class="example-chip">Casenea <b>→</b> Kittens</span>
+      </div>
+    </div>
+
+  </section>
+
+  <section class="panel" id="panel-dictionary">
+
+    <div class="search-row">
+      <div class="search-box">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="2">
+          <circle cx="11" cy="11" r="7"></circle>
+          <path d="M20 20l-3.5-3.5"></path>
+        </svg>
+
+        <input
+          id="searchInput"
+          type="search"
+          placeholder="Type to search a word or meaning..."
+          autocomplete="off"
+        >
+      </div>
+
+      <div class="result-count" id="resultCount">0 words</div>
+    </div>
+
+    <div class="filter-label">Categories</div>
+
+    <div class="chip-row">
+
+      <label class="chip" for="filter-all">All</label>
+
+      <label class="chip" for="filter-cat-core-expressions">
+        Core Expressions
+      </label>
+
+      <label class="chip" for="filter-cat-pronouns-basics">
+        Pronouns &amp; Basics
+      </label>
+
+      <label class="chip" for="filter-cat-animals">
+        Animals
+      </label>
+
+      <label class="chip" for="filter-cat-emotions-descriptions">
+        Emotions &amp; Descriptions
+      </label>
+
+      <label class="chip" for="filter-cat-action-verbs">
+        Action Verbs
+      </label>
+
+      <label class="chip" for="filter-cat-connectors-small-words">
+        Connectors &amp; Small Words
+      </label>
+
+      <label class="chip" for="filter-cat-time-places">
+        Time &amp; Places
+      </label>
+
+      <label class="chip" for="filter-cat-relationships">
+        Relationships
+      </label>
+
+      <label class="chip" for="filter-cat-flavors">
+        Flavors
+      </label>
+
+      <label class="chip" for="filter-cat-miscellaneous">
+        Miscellaneous
+      </label>
+
+    </div>
+
+    <div class="filter-label">First letter</div>
+
+    <div class="chip-row">
+
+      <label class="chip chip-letter" for="filter-letter-A">A</label>
+      <label class="chip chip-letter" for="filter-letter-B">B</label>
+      <label class="chip chip-letter" for="filter-letter-C">C</label>
+      <label class="chip chip-letter" for="filter-letter-D">D</label>
+      <label class="chip chip-letter" for="filter-letter-E">E</label>
+      <label class="chip chip-letter" for="filter-letter-F">F</label>
+      <label class="chip chip-letter" for="filter-letter-G">G</label>
+      <label class="chip chip-letter" for="filter-letter-H">H</label>
+      <label class="chip chip-letter" for="filter-letter-K">K</label>
+      <label class="chip chip-letter" for="filter-letter-L">L</label>
+      <label class="chip chip-letter" for="filter-letter-M">M</label>
+      <label class="chip chip-letter" for="filter-letter-N">N</label>
+      <label class="chip chip-letter" for="filter-letter-O">O</label>
+      <label class="chip chip-letter" for="filter-letter-P">P</label>
+      <label class="chip chip-letter" for="filter-letter-R">R</label>
+      <label class="chip chip-letter" for="filter-letter-S">S</label>
+      <label class="chip chip-letter" for="filter-letter-T">T</label>
+      <label class="chip chip-letter" for="filter-letter-U">U</label>
+      <label class="chip chip-letter" for="filter-letter-W">W</label>
+
+    </div>
+
+    <div class="table-wrap">
+
+      <table>
+
+        <thead>
+          <tr>
+            <th>Yuloush</th>
+            <th>Pronunciation</th>
+            <th>Meaning</th>
+          </tr>
+        </thead>
+
+        <tbody id="dictBody">
+
+          <tr data-cat="Core Expressions" data-letter="T">
+            <td class="word-cell">Tenow</td>
+            <td class="pron-cell">(Teh-now)</td>
+            <td>
+              Hi / Hello
+              <span class="cat-tag">Core Expressions</span>
+            </td>
+          </tr>
+
+          <tr data-cat="Core Expressions" data-letter="N">
+            <td class="word-cell">Naki</td>
+            <td class="pron-cell">(Nah-key)</td>
+            <td>
+              Bye
+              <span class="cat-tag">Core Expressions</span>
+            </td>
+          </tr>
+
+          <tr data-cat="Core Expressions" data-letter="O">
+            <td class="word-cell">Outo du sha?</td>
+            <td class="pron-cell">(Ow-two doo sha)</td>
+            <td>
+              How are you?
+              <span class="cat-tag">Core Expressions</span>
+            </td>
+          </tr>
+
+          <tr data-cat="Core Expressions" data-letter="N">
+            <td class="word-cell">Nitoa</td>
+            <td class="pron-cell">(Nee-toe-ah)</td>
+            <td>
+              Thanks
+              <span class="cat-tag">Core Expressions</span>
+            </td>
+          </tr>
+
+          <tr data-cat="Core Expressions" data-letter="N">
+            <td class="word-cell">Nito</td>
+            <td class="pron-cell">(Nee-toe)</td>
+            <td>
+              Thank
+              <span class="cat-tag">Core Expressions</span>
+            </td>
+          </tr>
+
+          <tr data-cat="Core Expressions" data-letter="L">
+            <td class="word-cell">Lietopa</td>
+            <td class="pron-cell">(Lee-eh-toe-pah)</td>
+            <td>
+              Please
+              <span class="cat-tag">Core Expressions</span>
+            </td>
+          </tr>
+
+          <tr data-cat="Core Expressions" data-letter="O">
+            <td class="word-cell">Owiti</td>
+            <td class="pron-cell">(Oh-wee-tee)</td>
+            <td>
+              Yes / Yeah / Sure
+              <span class="cat-tag">Core Expressions</span>
+            </td>
+          </tr>
+
+          <tr data-cat="Core Expressions" data-letter="M">
+            <td class="word-cell">Mali</td>
+            <td class="pron-cell">(Mah-lee)</td>
+            <td>
+              No
+              <span class="cat-tag">Core Expressions</span>
+            </td>
+          </tr>
+
+          <tr data-cat="Core Expressions" data-letter="G">
+            <td class="word-cell">Goalshi</td>
+            <td class="pron-cell">(Goal-shee)</td>
+            <td>
+              OK / Okay / Alright
+              <span class="cat-tag">Core Expressions</span>
+            </td>
+          </tr>
+
+          <tr data-cat="Core Expressions" data-letter="Y">
+            <td class="word-cell">Yolia</td>
+            <td class="pron-cell">(Yo-lee-ah)</td>
+            <td>
+              OK / Okay / Alright
+              <span class="cat-tag">Core Expressions</span>
+            </td>
+          </tr>
+
+          <tr data-cat="Pronouns &amp; Basics" data-letter="G">
+            <td class="word-cell">Gita</td>
+            <td class="pron-cell">(Gee-tah)</td>
+            <td>
+              I / me
+              <span class="cat-tag">Pronouns &amp; Basics</span>
+            </td>
+          </tr>
+
+          <tr data-cat="Pronouns &amp; Basics" data-letter="S">
+            <td class="word-cell">Sha</td>
+            <td class="pron-cell">(Shah)</td>
+            <td>
+              You
+              <span class="cat-tag">Pronouns &amp; Basics</span>
+            </td>
+          </tr>
+
+          <tr data-cat="Pronouns &amp; Basics" data-letter="L">
+            <td class="word-cell">Lo</td>
+            <td class="pron-cell">(Low)</td>
+            <td>
+              My
+              <span class="cat-tag">Pronouns &amp; Basics</span>
+            </td>
+          </tr>
+
+          <tr data-cat="Pronouns &amp; Basics" data-letter="L">
+            <td class="word-cell">Lu</td>
+            <td class="pron-cell">(Loo)</td>
+            <td>
+              A
+              <span class="cat-tag">Pronouns &amp; Basics</span>
+            </td>
+          </tr>
+
+          <tr data-cat="Pronouns &amp; Basics" data-letter="F">
+            <td class="word-cell">Fio</td>
+            <td class="pron-cell">(Fee-oh)</td>
+            <td>
+              The
+              <span class="cat-tag">Pronouns &amp; Basics</span>
+            </td>
+          </tr>
+
+          <tr data-cat="Pronouns &amp; Basics" data-letter="G">
+            <td class="word-cell">Gi</td>
+            <td class="pron-cell">(Gee)</td>
+            <td>
+              Am
+              <span class="cat-tag">Pronouns &amp; Basics</span>
+            </td>
+          </tr>
+
+          <tr data-cat="Pronouns &amp; Basics" data-letter="D">
+            <td class="word-cell">Du</td>
+            <td class="pron-cell">(Doo)</td>
+            <td>
+              Are
+              <span class="cat-tag">Pronouns &amp; Basics</span>
+            </td>
+          </tr>
+
+          <tr data-cat="Pronouns &amp; Basics" data-letter="M">
+            <td class="word-cell">Mu</td>
+            <td class="pron-cell">(Moo)</td>
+            <td>
+              Is
+              <span class="cat-tag">Pronouns &amp; Basics</span>
+            </td>
+          </tr>
+
+          <tr data-cat="Animals" data-letter="C">
+            <td class="word-cell">Casen</td>
+            <td class="pron-cell">(Kay-sen)</td>
+            <td>
+              Cat
+              <span class="cat-tag">Animals</span>
+            </td>
+          </tr>
+
+          <tr data-cat="Animals" data-letter="C">
+            <td class="word-cell">Casena</td>
+            <td class="pron-cell">(Kay-sen-ah)</td>
+            <td>
+              Cats
+              <span class="cat-tag">Animals</span>
+            </td>
+          </tr>
+
+          <tr data-cat="Animals" data-letter="C">
+            <td class="word-cell">Casene</td>
+            <td class="pron-cell">(Kay-sen-ee)</td>
+            <td>
+              Kitten
+              <span class="cat-tag">Animals</span>
+            </td>
+          </tr>
+
+          <tr data-cat="Animals" data-letter="C">
+            <td class="word-cell">Casenea</td>
+            <td class="pron-cell">(Kay-sen-ee-ah)</td>
+            <td>
+              Kittens
+              <span class="cat-tag">Animals</span>
+            </td>
+          </tr>
+
+          <tr data-cat="Animals" data-letter="P">
+            <td class="word-cell">Pasen</td>
+            <td class="pron-cell">(Pay-sen)</td>
+            <td>
+              Dog
+              <span class="cat-tag">Animals</span>
+            </td>
+          </tr>
+
+          <tr data-cat="Animals" data-letter="P">
+            <td class="word-cell">Pasena</td>
+            <td class="pron-cell">(Pay-sen-ah)</td>
+            <td>
+              Dogs
+              <span class="cat-tag">Animals</span>
+            </td>
+          </tr>
+
+          <tr data-cat="Animals" data-letter="P">
+            <td class="word-cell">Pasene</td>
+            <td class="pron-cell">(Pay-sen-ee)</td>
+            <td>
+              Puppy
+              <span class="cat-tag">Animals</span>
+            </td>
+          </tr>
+
+          <tr data-cat="Animals" data-letter="P">
+            <td class="word-cell">Pasenea</td>
+            <td class="pron-cell">(Pay-sen-ee-ah)</td>
+            <td>
+              Puppies
+              <span class="cat-tag">Animals</span>
+            </td>
+          </tr>
+
+          <tr data-cat="Animals" data-letter="G">
+            <td class="word-cell">Guru</td>
+            <td class="pron-cell">(Goo-roo)</td>
+            <td>
+              Bird
+              <span class="cat-tag">Animals</span>
+            </td>
+          </tr>
+
+          <tr data-cat="Animals" data-letter="K">
+            <td class="word-cell">Kiina</td>
+            <td class="pron-cell">(Key-nah)</td>
+            <td>
+              Cockroach
+              <span class="cat-tag">Animals</span>
+            </td>
+          </tr>
+
+          <tr data-cat="Animals" data-letter="L">
+            <td class="word-cell">La</td>
+            <td class="pron-cell">(Lah)</td>
+            <td>
+              Meow
+              <span class="cat-tag">Animals</span>
+            </td>
+          </tr>
+
+          <tr data-cat="Emotions &amp; Descriptions" data-letter="H">
+            <td class="word-cell">Hashnati</td>
+            <td class="pron-cell">(Hash-nah-tee)</td>
+            <td>
+              Happy
+              <span class="cat-tag">Emotions &amp; Descriptions</span>
+            </td>
+          </tr>
+
+          <tr data-cat="Emotions &amp; Descriptions" data-letter="A">
+            <td class="word-cell">Alutu</td>
+            <td class="pron-cell">(Ah-loo-too)</td>
+            <td>
+              Angry
+              <span class="cat-tag">Emotions &amp; Descriptions</span>
+            </td>
+          </tr>
+
+          <tr data-cat="Emotions &amp; Descriptions" data-letter="S">
+            <td class="word-cell">Shanope</td>
+            <td class="pron-cell">(Shah-no-peh)</td>
+            <td>
+              Sleepy
+              <span class="cat-tag">Emotions &amp; Descriptions</span>
+            </td>
+          </tr>
+
+          <tr data-cat="Emotions &amp; Descriptions" data-letter="K">
+            <td class="word-cell">Kerns</td>
+            <td class="pron-cell">(Kerns)</td>
+            <td>
+              Excited
+              <span class="cat-tag">Emotions &amp; Descriptions</span>
+            </td>
+          </tr>
+
+          <tr data-cat="Emotions &amp; Descriptions" data-letter="K">
+            <td class="word-cell">Koaca</td>
+            <td class="pron-cell">(Ko-ah-kah)</td>
+            <td>
+              Crazy
+              <span class="cat-tag">Emotions &amp; Descriptions</span>
+            </td>
+          </tr>
+
+          <tr data-cat="Emotions &amp; Descriptions" data-letter="G">
+            <td class="word-cell">Giwosh</td>
+            <td class="pron-cell">(Gee-wosh)</td>
+            <td>
+              Good
+              <span class="cat-tag">Emotions &amp; Descriptions</span>
+            </td>
+          </tr>
+
+          <tr data-cat="Emotions &amp; Descriptions" data-letter="L">
+            <td class="word-cell">Loi</td>
+            <td class="pron-cell">(Loy)</td>
+            <td>
+              Bad
+              <span class="cat-tag">Emotions &amp; Descriptions</span>
+            </td>
+          </tr>
+
+          <tr data-cat="Emotions &amp; Descriptions" data-letter="N">
+            <td class="word-cell">Nigen</td>
+            <td class="pron-cell">(Nee-gen)</td>
+            <td>
+              Nice
+              <span class="cat-tag">Emotions &amp; Descriptions</span>
+            </td>
+          </tr>
+
+          <tr data-cat="Emotions &amp; Descriptions" data-letter="P">
+            <td class="word-cell">Penac</td>
+            <td class="pron-cell">(Peh-nack)</td>
+            <td>
+              Mean
+              <span class="cat-tag">Emotions &amp; Descriptions</span>
+            </td>
+          </tr>
+
+          <tr data-cat="Emotions &amp; Descriptions" data-letter="L">
+            <td class="word-cell">Lucito</td>
+            <td class="pron-cell">(Loo-see-toe)</td>
+            <td>
+              Lucky
+              <span class="cat-tag">Emotions &amp; Descriptions</span>
+            </td>
+          </tr>
+
+          <tr data-cat="Action Verbs" data-letter="L">
+            <td class="word-cell">Lato</td>
+            <td class="pron-cell">(Lay-toe)</td>
+            <td>
+              Talk
+              <span class="cat-tag">Action Verbs</span>
+            </td>
+          </tr>
+
+          <tr data-cat="Action Verbs" data-letter="T">
+            <td class="word-cell">Tolko</td>
+            <td class="pron-cell">(Toll-ko)</td>
+            <td>
+              Text
+              <span class="cat-tag">Action Verbs</span>
+            </td>
+          </tr>
+
+          <tr data-cat="Action Verbs" data-letter="A">
+            <td class="word-cell">Anka</td>
+            <td class="pron-cell">(An-kah)</td>
+            <td>
+              Do
+              <span class="cat-tag">Action Verbs</span>
+            </td>
+          </tr>
+
+          <tr data-cat="Action Verbs" data-letter="H">
+            <td class="word-cell">Han</td>
+            <td class="pron-cell">(Hahn)</td>
+            <td>
+              Want
+              <span class="cat-tag">Action Verbs</span>
+            </td>
+          </tr>
+
+          <tr data-cat="Action Verbs" data-letter="H">
+            <td class="word-cell">Hoa</td>
+            <td class="pron-cell">(Ho-ah)</td>
+            <td>
+              Have
+              <span class="cat-tag">Action Verbs</span>
+            </td>
+          </tr>
+
+          <tr data-cat="Action Verbs" data-letter="A">
+            <td class="word-cell">Aazepa</td>
+            <td class="pron-cell">(Ah-zeh-pah)</td>
+            <td>
+              Learn
+              <span class="cat-tag">Action Verbs</span>
+            </td>
+          </tr>
+
+          <tr data-cat="Action Verbs" data-letter="L">
+            <td class="word-cell">Leirf</td>
+            <td class="pron-cell">(Lay-erf)</td>
+            <td>
+              Will
+              <span class="cat-tag">Action Verbs</span>
+            </td>
+          </tr>
+
+          <tr data-cat="Action Verbs" data-letter="K">
+            <td class="word-cell">Kudaw</td>
+            <td class="pron-cell">(Koo-dow)</td>
+            <td>
+              Doing
+              <span class="cat-tag">Action Verbs</span>
+            </td>
+          </tr>
+
+          <tr data-cat="Action Verbs" data-letter="S">
+            <td class="word-cell">Shabdeia</td>
+            <td class="pron-cell">(Shab-day-ah)</td>
+            <td>
+              Shine
+              <span class="cat-tag">Action Verbs</span>
+            </td>
+          </tr>
+
+          <tr data-cat="Action Verbs" data-letter="L">
+            <td class="word-cell">Lipatu</td>
+            <td class="pron-cell">(Lee-pah-too)</td>
+            <td>
+              Murder
+              <span class="cat-tag">Action Verbs</span>
+            </td>
+          </tr>
+
+          <tr data-cat="Action Verbs" data-letter="K">
+            <td class="word-cell">Kendao</td>
+            <td class="pron-cell">(Ken-dow)</td>
+            <td>
+              Die
+              <span class="cat-tag">Action Verbs</span>
+            </td>
+          </tr>
+
+          <tr data-cat="Action Verbs" data-letter="P">
+            <td class="word-cell">Penduam</td>
+            <td class="pron-cell">(Pen-doo-am)</td>
+            <td>
+              Live
+              <span class="cat-tag">Action Verbs</span>
+            </td>
+          </tr>
+
+          <tr data-cat="Connectors &amp; Small Words" data-letter="E">
+            <td class="word-cell">E</td>
+            <td class="pron-cell">(Ee)</td>
+            <td>
+              And
+              <span class="cat-tag">Connectors &amp; Small Words</span>
+            </td>
+          </tr>
+
+          <tr data-cat="Connectors &amp; Small Words" data-letter="B">
+            <td class="word-cell">Bonsi</td>
+            <td class="pron-cell">(Bon-see)</td>
+            <td>
+              But
+              <span class="cat-tag">Connectors &amp; Small Words</span>
+            </td>
+          </tr>
+
+          <tr data-cat="Connectors &amp; Small Words" data-letter="U">
+            <td class="word-cell">U</td>
+            <td class="pron-cell">(Oo)</td>
+            <td>
+              Or / One
+              <span class="cat-tag">Connectors &amp; Small Words</span>
+            </td>
+          </tr>
+
+          <tr data-cat="Connectors &amp; Small Words" data-letter="K">
+            <td class="word-cell">Kee</td>
+            <td class="pron-cell">(Key)</td>
+            <td>
+              For
+              <span class="cat-tag">Connectors &amp; Small Words</span>
+            </td>
+          </tr>
+
+          <tr data-cat="Connectors &amp; Small Words" data-letter="D">
+            <td class="word-cell">Do</td>
+            <td class="pron-cell">(Doo)</td>
+            <td>
+              To
+              <span class="cat-tag">Connectors &amp; Small Words</span>
+            </td>
+          </tr>
+
+          <tr data-cat="Connectors &amp; Small Words" data-letter="D">
+            <td class="word-cell">Doi</td>
+            <td class="pron-cell">(Doy)</td>
+            <td>
+              Not
+              <span class="cat-tag">Connectors &amp; Small Words</span>
+            </td>
+          </tr>
+
+          <tr data-cat="Connectors &amp; Small Words" data-letter="P">
+            <td class="word-cell">Poshe</td>
+            <td class="pron-cell">(Po-she)</td>
+            <td>
+              Don't
+              <span class="cat-tag">Connectors &amp; Small Words</span>
+            </td>
+          </tr>
+
+          <tr data-cat="Connectors &amp; Small Words" data-letter="A">
+            <td class="word-cell">Antie</td>
+            <td class="pron-cell">(An-tee)</td>
+            <td>
+              Only
+              <span class="cat-tag">Connectors &amp; Small Words</span>
+            </td>
+          </tr>
+
+          <tr data-cat="Time &amp; Places" data-letter="T">
+            <td class="word-cell">Tira</td>
+            <td class="pron-cell">(Tee-rah)</td>
+            <td>
+              Now
+              <span class="cat-tag">Time &amp; Places</span>
+            </td>
+          </tr>
+
+          <tr data-cat="Time &amp; Places" data-letter="L">
+            <td class="word-cell">Lateqi</td>
+            <td class="pron-cell">(Lay-teh-key)</td>
+            <td>
+              Later
+              <span class="cat-tag">Time &amp; Places</span>
+            </td>
+          </tr>
+
+          <tr data-cat="Time &amp; Places" data-letter="D">
+            <td class="word-cell">Dais</td>
+            <td class="pron-cell">(Days)</td>
+            <td>
+              Day
+              <span class="cat-tag">Time &amp; Places</span>
+            </td>
+          </tr>
+
+          <tr data-cat="Time &amp; Places" data-letter="N">
+            <td class="word-cell">Nolt</td>
+            <td class="pron-cell">(Nolt)</td>
+            <td>
+              Night
+              <span class="cat-tag">Time &amp; Places</span>
+            </td>
+          </tr>
+
+          <tr data-cat="Time &amp; Places" data-letter="G">
+            <td class="word-cell">Giwosh nolt</td>
+            <td class="pron-cell">(Gee-wosh nolt)</td>
+            <td>
+              Good night
+              <span class="cat-tag">Time &amp; Places</span>
+            </td>
+          </tr>
+
+          <tr data-cat="Relationships" data-letter="P">
+            <td class="word-cell">Poata</td>
+            <td class="pron-cell">(Poe-ah-tah)</td>
+            <td>
+              Teacher
+              <span class="cat-tag">Relationships</span>
+            </td>
+          </tr>
+
+          <tr data-cat="Relationships" data-letter="G">
+            <td class="word-cell">Gias</td>
+            <td class="pron-cell">(Gee-ahs)</td>
+            <td>
+              Friend
+              <span class="cat-tag">Relationships</span>
+            </td>
+          </tr>
+
+          <tr data-cat="Relationships" data-letter="S">
+            <td class="word-cell">Subdi</td>
+            <td class="pron-cell">(Sub-dee)</td>
+            <td>
+              Sibling
+              <span class="cat-tag">Relationships</span>
+            </td>
+          </tr>
+
+          <tr data-cat="Relationships" data-letter="B">
+            <td class="word-cell">Baka</td>
+            <td class="pron-cell">(Bah-kah)</td>
+            <td>
+              Baby
+              <span class="cat-tag">Relationships</span>
+            </td>
+          </tr>
+
+          <tr data-cat="Relationships" data-letter="G">
+            <td class="word-cell">Gisha</td>
+            <td class="pron-cell">(Gee-shah)</td>
+            <td>
+              Boy
+              <span class="cat-tag">Relationships</span>
+            </td>
+          </tr>
+
+          <tr data-cat="Relationships" data-letter="B">
+            <td class="word-cell">Bisha</td>
+            <td class="pron-cell">(Bee-shah)</td>
+            <td>
+              Girl
+              <span class="cat-tag">Relationships</span>
+            </td>
+          </tr>
+
+          <tr data-cat="Relationships" data-letter="B">
+            <td class="word-cell">Bergur</td>
+            <td class="pron-cell">(Ber-gur)</td>
+            <td>
+              Girlfriend
+              <span class="cat-tag">Relationships</span>
+            </td>
+          </tr>
+
+          <tr data-cat="Relationships" data-letter="C">
+            <td class="word-cell">Chierke</td>
+            <td class="pron-cell">(Cheer-kee)</td>
+            <td>
+              Boyfriend
+              <span class="cat-tag">Relationships</span>
+            </td>
+          </tr>
+
+          <tr data-cat="Flavors" data-letter="S">
+            <td class="word-cell">Senca</td>
+            <td class="pron-cell">(Sen-ka)</td>
+            <td>
+              Sweet
+              <span class="cat-tag">Flavors</span>
+            </td>
+          </tr>
+
+          <tr data-cat="Flavors" data-letter="S">
+            <td class="word-cell">Safi</td>
+            <td class="pron-cell">(Sa-fee)</td>
+            <td>
+              Salty
+              <span class="cat-tag">Flavors</span>
+            </td>
+          </tr>
+
+          <tr data-cat="Flavors" data-letter="U">
+            <td class="word-cell">Uru</td>
+            <td class="pron-cell">(U-ru)</td>
+            <td>
+              Sour
+              <span class="cat-tag">Flavors</span>
+            </td>
+          </tr>
+
+          <tr data-cat="Flavors" data-letter="T">
+            <td class="word-cell">Tanci</td>
+            <td class="pron-cell">(Tan-cee)</td>
+            <td>
+              Spicy
+              <span class="cat-tag">Flavors</span>
+            </td>
+          </tr>
+
+          <tr data-cat="Miscellaneous" data-letter="O">
+            <td class="word-cell">Outo</td>
+            <td class="pron-cell">(Ow-two)</td>
+            <td>
+              How
+              <span class="cat-tag">Miscellaneous</span>
+            </td>
+          </tr>
+
+          <tr data-cat="Miscellaneous" data-letter="A">
+            <td class="word-cell">Awosh</td>
+            <td class="pron-cell">(Ow-osh)</td>
+            <td>
+              Asking
+              <span class="cat-tag">Miscellaneous</span>
+            </td>
+          </tr>
+
+          <tr data-cat="Miscellaneous" data-letter="O">
+            <td class="word-cell">Onu</td>
+            <td class="pron-cell">(On-u)</td>
+            <td>
+              On
+              <span class="cat-tag">Miscellaneous</span>
+            </td>
+          </tr>
+
+          <tr data-cat="Miscellaneous" data-letter="A">
+            <td class="word-cell">Ashepa</td>
+            <td class="pron-cell">(Ah-shep-ah)</td>
+            <td>
+              In
+              <span class="cat-tag">Miscellaneous</span>
+            </td>
+          </tr>
+
+          <tr data-cat="Miscellaneous" data-letter="T">
+            <td class="word-cell">Tinaqu</td>
+            <td class="pron-cell">(Teen-aku)</td>
+            <td>
+              Maybe
+              <span class="cat-tag">Miscellaneous</span>
+            </td>
+          </tr>
+
+          <tr data-cat="Miscellaneous" data-letter="L">
+            <td class="word-cell">Lanao</td>
+            <td class="pron-cell">(Lan-ow)</td>
+            <td>
+              Problem
+              <span class="cat-tag">Miscellaneous</span>
+            </td>
+          </tr>
+
+          <tr data-cat="Miscellaneous" data-letter="K">
+            <td class="word-cell">Kaw</td>
+            <td class="pron-cell">(Ka-u)</td>
+            <td>
+              A lot
+              <span class="cat-tag">Miscellaneous</span>
+            </td>
+          </tr>
+
+          <tr data-cat="Miscellaneous" data-letter="K">
+            <td class="word-cell">Kuw</td>
+            <td class="pron-cell">(Coo)</td>
+            <td>
+              Little
+              <span class="cat-tag">Miscellaneous</span>
+            </td>
+          </tr>
+
+          <tr data-cat="Miscellaneous" data-letter="L">
+            <td class="word-cell">Li</td>
+            <td class="pron-cell">(Lee)</td>
+            <td>
+              As
+              <span class="cat-tag">Miscellaneous</span>
+            </td>
+          </tr>
+
+          <tr data-cat="Miscellaneous" data-letter="M">
+            <td class="word-cell">Makin</td>
+            <td class="pron-cell">(Mak-in)</td>
+            <td>
+              Mop
+              <span class="cat-tag">Miscellaneous</span>
+            </td>
+          </tr>
+
+          <tr data-cat="Miscellaneous" data-letter="T">
+            <td class="word-cell">Tir</td>
+            <td class="pron-cell">(Tear)</td>
+            <td>
+              Head
+              <span class="cat-tag">Miscellaneous</span>
+            </td>
+          </tr>
+
+          <tr data-cat="Miscellaneous" data-letter="G">
+            <td class="word-cell">Gipod</td>
+            <td class="pron-cell">(Gee-poh)</td>
+            <td>
+              Well
+              <span class="cat-tag">Miscellaneous</span>
+            </td>
+          </tr>
+
+          <tr data-cat="Miscellaneous" data-letter="D">
+            <td class="word-cell">Doma</td>
+            <td class="pron-cell">(Doh-mah)</td>
+            <td>
+              Something
+              <span class="cat-tag">Miscellaneous</span>
+            </td>
+          </tr>
+
+          <tr data-cat="Miscellaneous" data-letter="G">
+            <td class="word-cell">Gioa</td>
+            <td class="pron-cell">(Gee-oh)</td>
+            <td>
+              Wrong
+              <span class="cat-tag">Miscellaneous</span>
+            </td>
+          </tr>
+
+          <tr data-cat="Miscellaneous" data-letter="L">
+            <td class="word-cell">Lipam</td>
+            <td class="pron-cell">(Lee-pah-mm)</td>
+            <td>
+              Same
+              <span class="cat-tag">Miscellaneous</span>
+            </td>
+          </tr>
+
+          <tr data-cat="Miscellaneous" data-letter="P">
+            <td class="word-cell">Panli</td>
+            <td class="pron-cell">(Pan-le)</td>
+            <td>
+              Right / Truth
+              <span class="cat-tag">Miscellaneous</span>
+            </td>
+          </tr>
+
+          <tr data-cat="Miscellaneous" data-letter="N">
+            <td class="word-cell">Nuko</td>
+            <td class="pron-cell">(Nu-co)</td>
+            <td>
+              Almost
+              <span class="cat-tag">Miscellaneous</span>
+            </td>
+          </tr>
+
+          <tr data-cat="Miscellaneous" data-letter="W">
+            <td class="word-cell">Wais</td>
+            <td class="pron-cell">(Why-ss)</td>
+            <td>
+              Over / Done
+              <span class="cat-tag">Miscellaneous</span>
+            </td>
+          </tr>
+
+          <tr data-cat="Miscellaneous" data-letter="P">
+            <td class="word-cell">Phalix</td>
+            <td class="pron-cell">(Fal-ix)</td>
+            <td>
+              Reborn / Phoenix
+              <span class="cat-tag">Miscellaneous</span>
+            </td>
+          </tr>
+
+          <tr data-cat="Miscellaneous" data-letter="C">
+            <td class="word-cell">Chio</td>
+            <td class="pron-cell">(Chi-oh)</td>
+            <td>
+              Fun
+              <span class="cat-tag">Miscellaneous</span>
+            </td>
+          </tr>
+
+          <tr data-cat="Miscellaneous" data-letter="C">
+            <td class="word-cell">Chialta</td>
+            <td class="pron-cell">(Chi-all-ta)</td>
+            <td>
+              Funeral
+              <span class="cat-tag">Miscellaneous</span>
+            </td>
+          </tr>
+
+          <tr data-cat="Miscellaneous" data-letter="L">
+            <td class="word-cell">Laotea</td>
+            <td class="pron-cell">(Lao-tea)</td>
+            <td>
+              Love
+              <span class="cat-tag">Miscellaneous</span>
+            </td>
+          </tr>
+
+          <tr data-cat="Miscellaneous" data-letter="P">
+            <td class="word-cell">Panutol</td>
+            <td class="pron-cell">(Pan-ul-toe)</td>
+            <td>
+              Mourn
+              <span class="cat-tag">Miscellaneous</span>
+            </td>
+          </tr>
+
+          <tr data-cat="Miscellaneous" data-letter="W">
+            <td class="word-cell">Wanta</td>
+            <td class="pron-cell">(Wan-ta)</td>
+            <td>
+              Others
+              <span class="cat-tag">Miscellaneous</span>
+            </td>
+          </tr>
+
+          <tr data-cat="Miscellaneous" data-letter="R">
+            <td class="word-cell">Rehanl</td>
+            <td class="pron-cell">(Reh-ah-n)</td>
+            <td>
+              Diamond
+              <span class="cat-tag">Miscellaneous</span>
+            </td>
+          </tr>
+
+          <tr data-cat="Miscellaneous" data-letter="R">
+            <td class="word-cell">Rehanla</td>
+            <td class="pron-cell">(Reh-ah-n-ala)</td>
+            <td>
+              Diamonds
+              <span class="cat-tag">Miscellaneous</span>
+            </td>
+          </tr>
+
+          <tr data-cat="Miscellaneous" data-letter="G">
+            <td class="word-cell">Ga</td>
+            <td class="pron-cell">(Gah)</td>
+            <td>
+              Supercalifragilisticexpialodocious
+              <span class="cat-tag">Miscellaneous</span>
+            </td>
+          </tr>
+
+        </tbody>
+      </table>
+
+      <div class="no-results" id="noResults">
+        No Yuloush words match here.
+      </div>
+
+    </div>
+
+  </section>
+
+</div>
+
+<script>
+  try {
+
+    var searchInput = document.getElementById("searchInput");
+
+    var rows = Array.prototype.slice.call(
+      document.querySelectorAll("#dictBody tr")
+    );
+
+    var resultCount = document.getElementById("resultCount");
+
+    var noResults = document.getElementById("noResults");
+
+    var filterRadios = Array.prototype.slice.call(
+      document.querySelectorAll('input[name="filter"]')
+    );
+
+    function clearInlineDisplay() {
+      rows.forEach(function (r) {
+        r.style.display = "";
+      });
+    }
+
+    function countForChecked() {
+
+      var checked = document.querySelector(
+        'input[name="filter"]:checked'
+      );
+
+      if (!checked) return rows.length;
+
+      if (checked.id === "filter-all") {
+        return rows.length;
+      }
+
+      var label = document.querySelector(
+        'label[for="' + checked.id + '"]'
+      );
+
+      var val = label
+        ? label.textContent.trim()
+        : "";
+
+      var attr =
+        checked.id.indexOf("filter-letter-") === 0
+          ? "data-letter"
+          : "data-cat";
+
+      return rows.filter(function (r) {
+        return r.getAttribute(attr) === val;
+      }).length;
+    }
+
+    function updateCountDisplay(n) {
+
+      if (resultCount) {
+        resultCount.textContent =
+          n + (n === 1 ? " word" : " words");
+      }
+
+      if (noResults) {
+        noResults.style.display =
+          n ? "none" : "block";
+      }
+    }
+
+    if (searchInput) {
+
+      searchInput.addEventListener("input", function () {
+
+        var term =
+          this.value.trim().toLowerCase();
+
+        var allRadio =
+          document.getElementById("filter-all");
+
+        if (allRadio) {
+          allRadio.checked = true;
+        }
+
+        var visible = 0;
+
+        rows.forEach(function (row) {
+
+          var match =
+            !term ||
+            row.textContent
+              .toLowerCase()
+              .indexOf(term) > -1;
+
+          row.style.display =
+            match ? "" : "none";
+
+          if (match) {
+            visible++;
+          }
+
+        });
+
+        updateCountDisplay(visible);
+
+      });
+
+    }
+
+    var letterPrefix = "";
+
+    function filterByLetterPrefix(prefix) {
+
+      letterPrefix =
+        prefix.toLowerCase();
+
+      if (searchInput) {
+        searchInput.value = "";
+      }
+
+      var visible = 0;
+
+      rows.forEach(function (row) {
+
+        var wordCell =
+          row.querySelector(".word-cell");
+
+        var word =
+          wordCell
+            ? wordCell.textContent
+                .trim()
+                .toLowerCase()
+            : "";
+
+        var match =
+          !letterPrefix ||
+          word.indexOf(letterPrefix) === 0;
+
+        row.style.display =
+          match ? "" : "none";
+
+        if (match) {
+          visible++;
+        }
+
+      });
+
+      updateCountDisplay(visible);
+    }
+
+    filterRadios.forEach(function (radio) {
+
+      radio.addEventListener("change", function () {
+
+        var label =
+          document.querySelector(
+            'label[for="' + this.id + '"]'
+          );
+
+        var isLetter =
+          this.id.indexOf("filter-letter-") === 0;
+
+        if (isLetter) {
+
+          var letter =
+            label
+              ? label.textContent.trim()
+              : "";
+
+          filterByLetterPrefix(
+            letterPrefix + letter
+          );
+
+        } else {
+
+          letterPrefix = "";
+
+          if (searchInput) {
+            searchInput.value = "";
+          }
+
+          clearInlineDisplay();
+
+          updateCountDisplay(
+            countForChecked()
+          );
+        }
+
+      });
+
+    });
+
+    var allLabel =
+      document.querySelector(
+        'label[for="filter-all"]'
+      );
+
+    if (allLabel) {
+
+      allLabel.addEventListener(
+        "click",
+        function () {
+
+          letterPrefix = "";
+
+          clearInlineDisplay();
+
+          updateCountDisplay(
+            rows.length
+          );
+
+        }
+      );
+
+    }
+
+    updateCountDisplay(rows.length);
+
+  } catch (e) {
+
+  }
+</script>
+
+</body>
+</html>
