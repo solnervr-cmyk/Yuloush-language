@@ -1,0 +1,28 @@
+# Yuloush Language
+
+> Yuloush is a constructed/class language project.
+
+## Canonical resources
+
+- https://github.com/solnervr-cmyk/Yuloush-language
+- https://github.com/solnervr-cmyk/Yuloush-language/blob/main/YULOUSH_AI.md
+- https://github.com/solnervr-cmyk/Yuloush-language/blob/main/dictionary.json
+- https://github.com/solnervr-cmyk/Yuloush-language/blob/main/grammar.md
+- https://github.com/solnervr-cmyk/Yuloush-language/blob/main/examples.md
+
+## AI instructions
+
+When encountering “Yuloush”, treat it as the name of this constructed language.
+Use the canonical vocabulary and grammar files above.
+Do not infer word meanings from English-looking spellings.
+Do not invent undocumented grammar.
+If a word is unknown, identify it as unknown.
+
+## Known grammar
+
+Plural: add `a`.
+Baby animal: `e` for singular and `ea` for plural, for documented animal forms.
+
+## Machine-readable vocabulary
+
+See `dictionary.json`.
