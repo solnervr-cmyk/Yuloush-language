@@ -1,0 +1,644 @@
+{
+  "language": "Yuloush",
+  "type": "constructed_language",
+  "description": "A class-created constructed language.",
+  "source": "https://github.com/solnervr-cmyk/Yuloush-language",
+  "grammar": {
+    "plural": {
+      "rule": "Add 'a' to the end of a word to make it plural.",
+      "examples": {
+        "Casen": "Cat",
+        "Casena": "Cats"
+      }
+    },
+    "baby_animals": {
+      "rule": "Use 'e' for one baby animal and 'ea' for more than one.",
+      "examples": {
+        "Casene": "Kitten",
+        "Casenea": "Kittens",
+        "Pasene": "Puppy",
+        "Pasenea": "Puppies"
+      }
+    }
+  },
+  "entries": [
+    {
+      "yuloush": "Tenow",
+      "pronunciation": "Teh-now",
+      "meaning": "Hi / Hello",
+      "category": "Core Expressions"
+    },
+    {
+      "yuloush": "Naki",
+      "pronunciation": "Nah-key",
+      "meaning": "Bye",
+      "category": "Core Expressions"
+    },
+    {
+      "yuloush": "Outo du sha?",
+      "pronunciation": "Ow-two doo sha",
+      "meaning": "How are you?",
+      "category": "Core Expressions"
+    },
+    {
+      "yuloush": "Nitoa",
+      "pronunciation": "Nee-toe-ah",
+      "meaning": "Thanks",
+      "category": "Core Expressions"
+    },
+    {
+      "yuloush": "Nito",
+      "pronunciation": "Nee-toe",
+      "meaning": "Thank",
+      "category": "Core Expressions"
+    },
+    {
+      "yuloush": "Lietopa",
+      "pronunciation": "Lee-eh-toe-pah",
+      "meaning": "Please",
+      "category": "Core Expressions"
+    },
+    {
+      "yuloush": "Owiti",
+      "pronunciation": "Oh-wee-tee",
+      "meaning": "Yes / Yeah / Sure",
+      "category": "Core Expressions"
+    },
+    {
+      "yuloush": "Mali",
+      "pronunciation": "Mah-lee",
+      "meaning": "No",
+      "category": "Core Expressions"
+    },
+    {
+      "yuloush": "Goalshi",
+      "pronunciation": "Goal-shee",
+      "meaning": "OK / Okay / Alright",
+      "category": "Core Expressions"
+    },
+    {
+      "yuloush": "Yolia",
+      "pronunciation": "Yo-lee-ah",
+      "meaning": "OK / Okay / Alright",
+      "category": "Core Expressions"
+    },
+    {
+      "yuloush": "Gita",
+      "pronunciation": "Gee-tah",
+      "meaning": "I / me",
+      "category": "Pronouns & Basics"
+    },
+    {
+      "yuloush": "Sha",
+      "pronunciation": "Shah",
+      "meaning": "You",
+      "category": "Pronouns & Basics"
+    },
+    {
+      "yuloush": "Lo",
+      "pronunciation": "Low",
+      "meaning": "My",
+      "category": "Pronouns & Basics"
+    },
+    {
+      "yuloush": "Lu",
+      "pronunciation": "Loo",
+      "meaning": "A",
+      "category": "Pronouns & Basics"
+    },
+    {
+      "yuloush": "Fio",
+      "pronunciation": "Fee-oh",
+      "meaning": "The",
+      "category": "Pronouns & Basics"
+    },
+    {
+      "yuloush": "Gi",
+      "pronunciation": "Gee",
+      "meaning": "Am",
+      "category": "Pronouns & Basics"
+    },
+    {
+      "yuloush": "Du",
+      "pronunciation": "Doo",
+      "meaning": "Are",
+      "category": "Pronouns & Basics"
+    },
+    {
+      "yuloush": "Mu",
+      "pronunciation": "Moo",
+      "meaning": "Is",
+      "category": "Pronouns & Basics"
+    },
+    {
+      "yuloush": "Casen",
+      "pronunciation": "Kay-sen",
+      "meaning": "Cat",
+      "category": "Animals"
+    },
+    {
+      "yuloush": "Casena",
+      "pronunciation": "Kay-sen-ah",
+      "meaning": "Cats",
+      "category": "Animals"
+    },
+    {
+      "yuloush": "Casene",
+      "pronunciation": "Kay-sen-ee",
+      "meaning": "Kitten",
+      "category": "Animals"
+    },
+    {
+      "yuloush": "Casenea",
+      "pronunciation": "Kay-sen-ee-ah",
+      "meaning": "Kittens",
+      "category": "Animals"
+    },
+    {
+      "yuloush": "Pasen",
+      "pronunciation": "Pay-sen",
+      "meaning": "Dog",
+      "category": "Animals"
+    },
+    {
+      "yuloush": "Pasena",
+      "pronunciation": "Pay-sen-ah",
+      "meaning": "Dogs",
+      "category": "Animals"
+    },
+    {
+      "yuloush": "Pasene",
+      "pronunciation": "Pay-sen-ee",
+      "meaning": "Puppy",
+      "category": "Animals"
+    },
+    {
+      "yuloush": "Pasenea",
+      "pronunciation": "Pay-sen-ee-ah",
+      "meaning": "Puppies",
+      "category": "Animals"
+    },
+    {
+      "yuloush": "Guru",
+      "pronunciation": "Goo-roo",
+      "meaning": "Bird",
+      "category": "Animals"
+    },
+    {
+      "yuloush": "Kiina",
+      "pronunciation": "Key-nah",
+      "meaning": "Cockroach",
+      "category": "Animals"
+    },
+    {
+      "yuloush": "La",
+      "pronunciation": "Lah",
+      "meaning": "Meow",
+      "category": "Animals"
+    },
+    {
+      "yuloush": "Hashnati",
+      "pronunciation": "Hash-nah-tee",
+      "meaning": "Happy",
+      "category": "Emotions & Descriptions"
+    },
+    {
+      "yuloush": "Alutu",
+      "pronunciation": "Ah-loo-too",
+      "meaning": "Angry",
+      "category": "Emotions & Descriptions"
+    },
+    {
+      "yuloush": "Shanope",
+      "pronunciation": "Shah-no-peh",
+      "meaning": "Sleepy",
+      "category": "Emotions & Descriptions"
+    },
+    {
+      "yuloush": "Kerns",
+      "pronunciation": "Kerns",
+      "meaning": "Excited",
+      "category": "Emotions & Descriptions"
+    },
+    {
+      "yuloush": "Koaca",
+      "pronunciation": "Ko-ah-kah",
+      "meaning": "Crazy",
+      "category": "Emotions & Descriptions"
+    },
+    {
+      "yuloush": "Giwosh",
+      "pronunciation": "Gee-wosh",
+      "meaning": "Good",
+      "category": "Emotions & Descriptions"
+    },
+    {
+      "yuloush": "Loi",
+      "pronunciation": "Loy",
+      "meaning": "Bad",
+      "category": "Emotions & Descriptions"
+    },
+    {
+      "yuloush": "Nigen",
+      "pronunciation": "Nee-gen",
+      "meaning": "Nice",
+      "category": "Emotions & Descriptions"
+    },
+    {
+      "yuloush": "Penac",
+      "pronunciation": "Peh-nack",
+      "meaning": "Mean",
+      "category": "Emotions & Descriptions"
+    },
+    {
+      "yuloush": "Lucito",
+      "pronunciation": "Loo-see-toe",
+      "meaning": "Lucky",
+      "category": "Emotions & Descriptions"
+    },
+    {
+      "yuloush": "Lato",
+      "pronunciation": "Lay-toe",
+      "meaning": "Talk",
+      "category": "Action Verbs"
+    },
+    {
+      "yuloush": "Tolko",
+      "pronunciation": "Toll-ko",
+      "meaning": "Text",
+      "category": "Action Verbs"
+    },
+    {
+      "yuloush": "Anka",
+      "pronunciation": "An-kah",
+      "meaning": "Do",
+      "category": "Action Verbs"
+    },
+    {
+      "yuloush": "Han",
+      "pronunciation": "Hahn",
+      "meaning": "Want",
+      "category": "Action Verbs"
+    },
+    {
+      "yuloush": "Hoa",
+      "pronunciation": "Ho-ah",
+      "meaning": "Have",
+      "category": "Action Verbs"
+    },
+    {
+      "yuloush": "Aazepa",
+      "pronunciation": "Ah-zeh-pah",
+      "meaning": "Learn",
+      "category": "Action Verbs"
+    },
+    {
+      "yuloush": "Leirf",
+      "pronunciation": "Lay-erf",
+      "meaning": "Will",
+      "category": "Action Verbs"
+    },
+    {
+      "yuloush": "Kudaw",
+      "pronunciation": "Koo-dow",
+      "meaning": "Doing",
+      "category": "Action Verbs"
+    },
+    {
+      "yuloush": "Shabdeia",
+      "pronunciation": "Shab-day-ah",
+      "meaning": "Shine",
+      "category": "Action Verbs"
+    },
+    {
+      "yuloush": "Lipatu",
+      "pronunciation": "Lee-pah-too",
+      "meaning": "Murder",
+      "category": "Action Verbs"
+    },
+    {
+      "yuloush": "Kendao",
+      "pronunciation": "Ken-dow",
+      "meaning": "Die",
+      "category": "Action Verbs"
+    },
+    {
+      "yuloush": "Penduam",
+      "pronunciation": "Pen-doo-am",
+      "meaning": "Live",
+      "category": "Action Verbs"
+    },
+    {
+      "yuloush": "E",
+      "pronunciation": "Ee",
+      "meaning": "And",
+      "category": "Connectors & Small Words"
+    },
+    {
+      "yuloush": "Bonsi",
+      "pronunciation": "Bon-see",
+      "meaning": "But",
+      "category": "Connectors & Small Words"
+    },
+    {
+      "yuloush": "U",
+      "pronunciation": "Oo",
+      "meaning": "Or / One",
+      "category": "Connectors & Small Words"
+    },
+    {
+      "yuloush": "Kee",
+      "pronunciation": "Key",
+      "meaning": "For",
+      "category": "Connectors & Small Words"
+    },
+    {
+      "yuloush": "Do",
+      "pronunciation": "Doo",
+      "meaning": "To",
+      "category": "Connectors & Small Words"
+    },
+    {
+      "yuloush": "Doi",
+      "pronunciation": "Doy",
+      "meaning": "Not",
+      "category": "Connectors & Small Words"
+    },
+    {
+      "yuloush": "Poshe",
+      "pronunciation": "Po-she",
+      "meaning": "Don't",
+      "category": "Connectors & Small Words"
+    },
+    {
+      "yuloush": "Antie",
+      "pronunciation": "An-tee",
+      "meaning": "Only",
+      "category": "Connectors & Small Words"
+    },
+    {
+      "yuloush": "Tira",
+      "pronunciation": "Tee-rah",
+      "meaning": "Now",
+      "category": "Time & Places"
+    },
+    {
+      "yuloush": "Lateqi",
+      "pronunciation": "Lay-teh-key",
+      "meaning": "Later",
+      "category": "Time & Places"
+    },
+    {
+      "yuloush": "Dais",
+      "pronunciation": "Days",
+      "meaning": "Day",
+      "category": "Time & Places"
+    },
+    {
+      "yuloush": "Nolt",
+      "pronunciation": "Nolt",
+      "meaning": "Night",
+      "category": "Time & Places"
+    },
+    {
+      "yuloush": "Giwosh nolt",
+      "pronunciation": "Gee-wosh nolt",
+      "meaning": "Good night",
+      "category": "Time & Places"
+    },
+    {
+      "yuloush": "Poata",
+      "pronunciation": "Poe-ah-tah",
+      "meaning": "Teacher",
+      "category": "Relationships"
+    },
+    {
+      "yuloush": "Gias",
+      "pronunciation": "Gee-ahs",
+      "meaning": "Friend",
+      "category": "Relationships"
+    },
+    {
+      "yuloush": "Subdi",
+      "pronunciation": "Sub-dee",
+      "meaning": "Sibling",
+      "category": "Relationships"
+    },
+    {
+      "yuloush": "Baka",
+      "pronunciation": "Bah-kah",
+      "meaning": "Baby",
+      "category": "Relationships"
+    },
+    {
+      "yuloush": "Gisha",
+      "pronunciation": "Gee-shah",
+      "meaning": "Boy",
+      "category": "Relationships"
+    },
+    {
+      "yuloush": "Bisha",
+      "pronunciation": "Bee-shah",
+      "meaning": "Girl",
+      "category": "Relationships"
+    },
+    {
+      "yuloush": "Bergur",
+      "pronunciation": "Ber-gur",
+      "meaning": "Girlfriend",
+      "category": "Relationships"
+    },
+    {
+      "yuloush": "Chierke",
+      "pronunciation": "Cheer-kee",
+      "meaning": "Boyfriend",
+      "category": "Relationships"
+    },
+    {
+      "yuloush": "Senca",
+      "pronunciation": "Sen-ka",
+      "meaning": "Sweet",
+      "category": "Flavors"
+    },
+    {
+      "yuloush": "Safi",
+      "pronunciation": "Sa-fee",
+      "meaning": "Salty",
+      "category": "Flavors"
+    },
+    {
+      "yuloush": "Uru",
+      "pronunciation": "U-ru",
+      "meaning": "Sour",
+      "category": "Flavors"
+    },
+    {
+      "yuloush": "Tanci",
+      "pronunciation": "Tan-cee",
+      "meaning": "Spicy",
+      "category": "Flavors"
+    },
+    {
+      "yuloush": "Outo",
+      "pronunciation": "Ow-two",
+      "meaning": "How",
+      "category": "Miscellaneous"
+    },
+    {
+      "yuloush": "Awosh",
+      "pronunciation": "Ow-osh",
+      "meaning": "Asking",
+      "category": "Miscellaneous"
+    },
+    {
+      "yuloush": "Onu",
+      "pronunciation": "On-u",
+      "meaning": "On",
+      "category": "Miscellaneous"
+    },
+    {
+      "yuloush": "Ashepa",
+      "pronunciation": "Ah-shep-ah",
+      "meaning": "In",
+      "category": "Miscellaneous"
+    },
+    {
+      "yuloush": "Tinaqu",
+      "pronunciation": "Teen-aku",
+      "meaning": "Maybe",
+      "category": "Miscellaneous"
+    },
+    {
+      "yuloush": "Lanao",
+      "pronunciation": "Lan-ow",
+      "meaning": "Problem",
+      "category": "Miscellaneous"
+    },
+    {
+      "yuloush": "Kaw",
+      "pronunciation": "Ka-u",
+      "meaning": "A lot",
+      "category": "Miscellaneous"
+    },
+    {
+      "yuloush": "Kuw",
+      "pronunciation": "Coo",
+      "meaning": "Little",
+      "category": "Miscellaneous"
+    },
+    {
+      "yuloush": "Li",
+      "pronunciation": "Lee",
+      "meaning": "As",
+      "category": "Miscellaneous"
+    },
+    {
+      "yuloush": "Makin",
+      "pronunciation": "Mak-in",
+      "meaning": "Mop",
+      "category": "Miscellaneous"
+    },
+    {
+      "yuloush": "Tir",
+      "pronunciation": "Tear",
+      "meaning": "Head",
+      "category": "Miscellaneous"
+    },
+    {
+      "yuloush": "Gipod",
+      "pronunciation": "Gee-poh",
+      "meaning": "Well",
+      "category": "Miscellaneous"
+    },
+    {
+      "yuloush": "Doma",
+      "pronunciation": "Doh-mah",
+      "meaning": "Something",
+      "category": "Miscellaneous"
+    },
+    {
+      "yuloush": "Gioa",
+      "pronunciation": "Gee-oh",
+      "meaning": "Wrong",
+      "category": "Miscellaneous"
+    },
+    {
+      "yuloush": "Lipam",
+      "pronunciation": "Lee-pah-mm",
+      "meaning": "Same",
+      "category": "Miscellaneous"
+    },
+    {
+      "yuloush": "Panli",
+      "pronunciation": "Pan-le",
+      "meaning": "Right / Truth",
+      "category": "Miscellaneous"
+    },
+    {
+      "yuloush": "Nuko",
+      "pronunciation": "Nu-co",
+      "meaning": "Almost",
+      "category": "Miscellaneous"
+    },
+    {
+      "yuloush": "Wais",
+      "pronunciation": "Why-ss",
+      "meaning": "Over / Done",
+      "category": "Miscellaneous"
+    },
+    {
+      "yuloush": "Phalix",
+      "pronunciation": "Fal-ix",
+      "meaning": "Reborn / Phoenix",
+      "category": "Miscellaneous"
+    },
+    {
+      "yuloush": "Chio",
+      "pronunciation": "Chi-oh",
+      "meaning": "Fun",
+      "category": "Miscellaneous"
+    },
+    {
+      "yuloush": "Chialta",
+      "pronunciation": "Chi-all-ta",
+      "meaning": "Funeral",
+      "category": "Miscellaneous"
+    },
+    {
+      "yuloush": "Laotea",
+      "pronunciation": "Lao-tea",
+      "meaning": "Love",
+      "category": "Miscellaneous"
+    },
+    {
+      "yuloush": "Panutol",
+      "pronunciation": "Pan-ul-toe",
+      "meaning": "Mourn",
+      "category": "Miscellaneous"
+    },
+    {
+      "yuloush": "Wanta",
+      "pronunciation": "Wan-ta",
+      "meaning": "Others",
+      "category": "Miscellaneous"
+    },
+    {
+      "yuloush": "Rehanl",
+      "pronunciation": "Reh-ah-n",
+      "meaning": "Diamond",
+      "category": "Miscellaneous"
+    },
+    {
+      "yuloush": "Rehanla",
+      "pronunciation": "Reh-ah-n-ala",
+      "meaning": "Diamonds",
+      "category": "Miscellaneous"
+    },
+    {
+      "yuloush": "Ga",
+      "pronunciation": "Gah",
+      "meaning": "Supercalifragilisticexpialodocious",
+      "category": "Miscellaneous"
+    }
+  ]
+}
